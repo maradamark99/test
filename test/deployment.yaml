@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: test
+spec:
+  strategy: 
+    rollingUpdate: 
+      maxSurge: 1
+      maxUnavailable: 1
+  replicas: 3
+  selector: 
+    matchLabels:
+      api: test
+  template:
+    metadata:
+      labels:
+        api: test
+    spec:
+      containers:
+        - name: test
+          image: maradamark99/test:latest
+          ports:
+          - containerPort: 5000
+        readinessProbe:
+          periodSeconds: 1
+          successThreshold: 5
+          httpGet:
+            path: /health
+            port: 5000
+        livenessProbe:
+          httpGet:
+            path: /health 
+            port: 5000
